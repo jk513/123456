@@ -11,7 +11,11 @@ return [
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
-    'modules' => [],
+    'modules' => [
+        'gii'=>[
+            'class'=>'yii\gii\Module'
+        ]
+    ],
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-backend',
@@ -45,6 +49,16 @@ return [
             ],
         ],
 
+        'qiniu'=>[//把七牛的使用需要配置的文件提出来到配置文件 每次使用可以视情况来配置
+            'class'=>\backend\components\Qiniu::className(),
+            'up_host'=>'http://up-z2.qiniu.com',
+            'accessKey'=>'oYzpv2MsK1xPLJcXQYHSEv_GL8cJ_NEswlr2nMY8',
+            'secretKey'=>'XRiBGtYiz6lHnaHXcWxfoKIBxeGZhCWO7540JsyD',
+            'bucket'=>'123456',
+            'domain'=>'http://or9o0adkn.bkt.clouddn.com/',
+        ]
     ],
+
+
     'params' => $params,
 ];
