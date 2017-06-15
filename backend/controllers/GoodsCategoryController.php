@@ -1,7 +1,9 @@
 <?php
 namespace backend\controllers;
 use backend\models\GoodsCategory;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 
 class GoodsCategoryController extends Controller{
 
@@ -21,13 +23,47 @@ class GoodsCategoryController extends Controller{
              \Yii::$app->session->setFlash('success',['设置成功']);
              return $this->redirect(['goods-category/index']);
          }
-
-         return $this->render('add',['model'=>$model]);
+         $categories=GoodsCategory::find()->asArray()->all();
+         return $this->render('add',['model'=>$model,'categories'=>$categories]);
      }
+    //修改
+    public function actionEdit($id)
+    {
+        $model = GoodsCategory::findOne(['id'=>$id]);
+        if($model==null){
+            throw new NotFoundHttpException('分类不存在');
+        }
+        if($model->load(\Yii::$app->request->post()) && $model->validate()){
+            //判断是否是添加一级分类（parent_id是否为0）
+            if($model->parent_id){
+                //添加非一级分类
+                $parent = GoodsCategory::findOne(['id'=>$model->parent_id]);//获取上一级分类
+                $model->prependTo($parent);//添加到上一级分类下面
+            }else{
+                //先判断本来是不是顶级分类
+                if($model->getOldAttribute('parent_id')==0){
+                    $model->save();
+                }else{
+                    //添加一级分类
+                    $model->makeRoot();
+                }
 
+
+            }
+            \Yii::$app->session->setFlash('success','添加成功');
+            return $this->redirect(['goods-category/index']);
+        }
+        $categories = ArrayHelper::merge([['id'=>0,'name'=>'顶级分类','parent_id'=>0]],GoodsCategory::find()->asArray()->all());
+
+
+        return $this->render('add',['model'=>$model,'categories'=>$categories]);
+    }
 
 
     public function actionIndex(){
+        $models=GoodsCategory::find()->orderBy('tree,lft')->all();  /*先按树排序，再按树里面的左值排序，默认是升序*/
+
+        return $this->render('index',['models'=>$models]);
 
     }
     //测试

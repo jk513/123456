@@ -79,4 +79,8 @@ class GoodsCategory extends \yii\db\ActiveRecord
     {
         return new GoodsCategoryQuery(get_called_class());
     }
+    public function getParent(){
+        //此处hasone(GoodsCategory::className()就是自己的self的className()）
+        return $this->hasOne(self::className(),['id'=>'parent_id']);
+    }
 }

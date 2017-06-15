@@ -21,8 +21,11 @@ return [
             'csrfParam' => '_csrf-backend',
         ],
         'user' => [
-            'identityClass' => 'common\models\User',
-            'enableAutoLogin' => true,
+
+           // 'identityClass' => 'common\models\User',
+            'loginUrl'=>['user/login'],//è®¾ç½®é»˜è®¤ç™»å½•é¡µé¢ å¯ä»¥ä¿®æ”¹,
+            'identityClass' => 'backend\models\User',
+            'enableAutoLogin' => true,//å¦‚æžœæ˜¯åŸºäºŽcookieçš„è‡ªåŠ¨ç™»å½• è¿™é‡Œè¦ä¸ºtrue
             'identityCookie' => ['name' => '_identity-backend', 'httpOnly' => true],
         ],
         'session' => [
@@ -49,7 +52,7 @@ return [
             ],
         ],
 
-        'qiniu'=>[//°ÑÆßÅ£µÄÊ¹ÓÃÐèÒªÅäÖÃµÄÎÄ¼þÌá³öÀ´µ½ÅäÖÃÎÄ¼þ Ã¿´ÎÊ¹ÓÃ¿ÉÒÔÊÓÇé¿öÀ´ÅäÖÃ
+        'qiniu'=>[//ï¿½ï¿½ï¿½ï¿½Å£ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ãµï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ Ã¿ï¿½ï¿½Ê¹ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             'class'=>\backend\components\Qiniu::className(),
             'up_host'=>'http://up-z2.qiniu.com',
             'accessKey'=>'oYzpv2MsK1xPLJcXQYHSEv_GL8cJ_NEswlr2nMY8',
