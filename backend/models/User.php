@@ -72,8 +72,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     }
 
     public function validatePassword(){
-     if(!$this->password_sure==$this->password_hash) {
+     if($this->password_sure!=$this->password_hash) {
          $this->addError('password_sure','两次输入的密码不一致');
+         return false;
      }
     }
   /* 以下两种方法得到创建时间和更新时间*/

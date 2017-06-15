@@ -20,6 +20,7 @@ class UserController extends Controller{
             return $this->redirect(['user/index']);
 
          }else{
+
              var_dump($model->getErrors());
          }
         }

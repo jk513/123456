@@ -3,7 +3,7 @@ $form=\yii\bootstrap\ActiveForm::begin();
 echo $form->field($model,'name');
 echo $form->field($model,'imgFile')->fileInput();
 if($model->logo){
-    echo "<img src='$model->logo' width='60'>";
+    echo "<img src= \Yii::getAlias('@web').$model->logo width='60'>";
 }
 echo $form->field($model,'goods_category_id')->hiddenInput();
 echo '<ul id="treeDemo" class="ztree"></ul>';/*加载ztree容器*/
