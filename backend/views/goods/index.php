@@ -37,7 +37,7 @@ echo \yii\bootstrap\Html::submitButton('搜索');
     <tr>
         <td><?= $model->name ?></td>
         <td><?= $model->sn ?></td>
-        <td><img width="40" src="<?= \Yii::getAlias('@webroot').$model->logo?>"></td>
+        <td><img width="40" src="<?= \Yii::getAlias('@web').$model->logo?>"></td>
         <td><?= $model->category->name ?></td>
         <td><?= $model->brands->name ?></td>
         <td><?= $model->market_price ?></td>
