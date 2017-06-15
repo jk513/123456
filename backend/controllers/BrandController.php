@@ -122,7 +122,7 @@ class BrandController extends Controller{
                     $qiniu=\Yii::$app->qiniu;  //实例化定义的$qiniu方便使用里面的功能
                     $qiniu->upLoadFile($action->getSavePath(),$imgUrl);
                     //获取该图片在七牛云的地址
-                    $url=$qiniu->getLink($action->getSavePath());
+                    $url=$qiniu->getLink($imgUrl);
 
                     $action->output['fileUrl']=$url;
                   /*  $action->getFilename(); // "image/yyyymmddtimerand.jpg"
