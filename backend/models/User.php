@@ -4,6 +4,7 @@ namespace backend\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
 
 /**
@@ -27,6 +28,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @inheritdoc
      */
     public $password_sure;
+    public $name = []; // 定义角色身份
     public static function tableName()
     {
         return 'user';
@@ -46,7 +48,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             ['email', 'email'],
             [['password_reset_token'], 'unique'],
             ['password_sure','required'],
-            ['password_sure','validatePassword']
+            ['password_sure','validatePassword'],
+            ['name','safe']
         ];
     }
 
@@ -109,6 +112,11 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         }
         return parent::beforeSave($insert);
     }
+
+    //获得角色
+   /* public function getRole(){
+        return $this->hasOne(UserForm::className(),['user_id','id']);
+    }*/
 
     /**
      * Finds an identity by the given ID.
@@ -179,4 +187,90 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         return $this-> getAuthKey()==$authKey;
 
     }
+    //处理角色权限 多选框
+    public static function getRoleAction()
+    {
+        $authManager = Yii::$app->authManager;
+        return ArrayHelper::map($authManager->getRoles(), 'name', 'name');
+    }
+
+    //处理角色回显的操作
+
+
+    public function loadDate($id)
+    {
+        $roles = Yii::$app->authManager->getRolesByUser($id);
+       /* var_dump($roles);
+        exit;*/
+        if ($roles != null) {
+            //遍历数组 得到的是每一个身份角色
+            foreach ($roles as $key => $role) {
+                //将当前的角色回显到模板中
+                $this->name[$key] = $key;
+            }
+        }
+    }
+
+    //查询当前的管理员包含的角色  传入当前user的id
+    public static function getNowUserRole($id)
+    {
+        $authManager = Yii::$app->authManager->getRolesByUser($id);
+        $roles = [];
+        foreach ($authManager as $roleObj) {
+            if ($roleObj->name != null) {
+                $roles[] = $roleObj->name;
+            };
+        }
+        return $roles;
+    }
+
+    //添加管理员角色
+    public function addUserRole($id)
+    {
+        if ($this->name != null) {
+            $authManager = Yii::$app->authManager;
+            foreach ($this->name as $userRole) {
+                $role = $authManager->getRole($userRole);
+                if ($authManager->assign($role, $id)) {
+                };
+            }
+            return true;
+        } else { // 没有选择管理角色时 直接跳过
+            return true;
+        }
+    }
+
+
+    //  修改管理员角色
+    public function updateUserRole($id, $oldName)
+    {
+        if ($this != null && $this->name != $oldName) {
+            //清除有关当前用户角色
+            $authManager = Yii::$app->authManager;
+            $authManager->revokeAll($id);
+            foreach ($this->name as $userRole) {
+                $role = $authManager->getRole($userRole);
+                if ($authManager->assign($role, $id)) {
+
+                };
+            }
+            return true;
+        } else { // 没有选择管理角色时 直接跳过
+            return true;
+        }
+    }
+
+    //删除用户关联角色
+    public function deleteUserRole($id)
+    {
+        $authManager = Yii::$app->authManager;
+        $role = $authManager->getRolesByUser($id);
+        if ($role != null) {
+            $authManager->revokeAll($id);
+        }
+        return true;
+    }
+
+
 }
+

@@ -49,22 +49,13 @@ class ArticleController extends Controller{
         $content=ArticleDetail::find()->where(['article_id'=>$id])->one();
         $model->content=$content->content;
         $request=new Request();
-
         if($request->isPost){
-
             $model->load($request->post())  ;
-
             if($model->validate()){
-
                 $model->save();
-
-
                 $article_detail=ArticleDetail::find()->where(['article_id'=>$id])->one();
-
-
                 $article_detail->content=$model->content;
                 /* var_dump($article_detail->content);exit;*/
-
                 $article_detail->save();
 
                 \Yii::$app->session->setFlash('success','添加成功');
@@ -77,7 +68,6 @@ class ArticleController extends Controller{
     }
 
     public function actionDelete($id){
-
         $model=Article::find()->where(['id'=>$id])->one();
        /* $article_detail=ArticleDetail::find()->where(['article_id'=>$id])->one();
         $model->status=-1;*/

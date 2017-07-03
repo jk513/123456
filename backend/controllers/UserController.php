@@ -1,11 +1,23 @@
 <?php
 namespace backend\controllers;
+use backend\components\RbacFilter;
 use backend\models\User;
 use backend\models\LoginForm;
 use yii\web\Controller;
 use yii\web\Request;
 
 class UserController extends Controller{
+    //使用过滤器  过滤器是一种特殊的行为 所以用行为调用
+   /* public function behaviors(){
+        return[
+          'rabc'=>[
+              'class'=>RbacFilter::className(),//调用rabc这个过滤器
+          ]
+        ];
+    }*/
+
+
+
     public function actionAdd(){
         $model=new User();
        /* $request=new Request();
@@ -13,14 +25,12 @@ class UserController extends Controller{
             $model->load($request->post()); 这三行可以用下面的一行代替
         }*/
         if($model->load(\Yii::$app->request->post())){
-
          if($model->validate()){
              $model->save();
+             if ($model->addUserRole($model->id)) {
            \Yii::$app->session->setFlash('success','新增成功');
-            return $this->redirect(['user/index']);
-
+            return $this->redirect(['user/index']);}
          }else{
-
              var_dump($model->getErrors());
          }
         }
@@ -28,17 +38,20 @@ class UserController extends Controller{
     }
     public function actionIndex(){
         $models=User::find()->all();
+
       return $this->render('index',['models'=>$models]);
     }
     public function actionUpdate($id){
       $model=User::find()->where(['id'=>$id])->one();
+        $model->loadDate($id);
+        $oldName = $model->name;
         if($model->load(\Yii::$app->request->post())){
 
             if($model->validate()){
                 $model->save();
+                if ($model->updateUserRole($model->id, $oldName)) {
                 \Yii::$app->session->setFlash('success','修改成功');
-                $this->redirect(['user/index']);
-
+                $this->redirect(['user/index']);}
             }else{
                 var_dump($model->getErrors());
             }

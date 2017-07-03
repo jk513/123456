@@ -77,10 +77,13 @@ class GoodsCategory extends \yii\db\ActiveRecord
 
     public static function find()
     {
-        return new GoodsCategoryQuery(get_called_class());
+        return new GoodsCategoryQuery(get_called_class());//这里要修改，是啥子类在用就写这个类名
     }
     public function getParent(){
         //此处hasone(GoodsCategory::className()就是自己的self的className()）
         return $this->hasOne(self::className(),['id'=>'parent_id']);
+    }
+    public function getChildren(){
+        return $this->hasMany(self::className(),['parent_id'=>'id']);
     }
 }

@@ -9,7 +9,6 @@ echo '<ul id="treeDemo" class="ztree"></ul>';/*加载ztree容器*/
 echo $form->field($model,'intro')->textarea();
 echo \yii\bootstrap\Html::submitButton('提交',['class'=>'btn btn-info']);
 \yii\bootstrap\ActiveForm::end();
-
 //使用ztree，加载2个静态资源
 /*<link rel="stylesheet" href="/zTree/css/zTreeStyle/zTreeStyle.css" type="text/css">
     <script type="text/javascript" src="/zTree/js/jquery-1.4.4.min.js"></script>

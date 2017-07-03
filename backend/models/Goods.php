@@ -38,6 +38,12 @@ class Goods extends \yii\db\ActiveRecord
     {
         return 'goods';
     }
+   /* public function scenarios(){
+        $scenarios=parent::scenarios();
+        $scenarios[self::SCENARIO_ADD]=['imgFile'];
+        $scenarios[self::SCENARIO_EDIT]=['imgFile'];
+        return $scenarios;
+    }*/
 
     /**
      * @inheritdoc

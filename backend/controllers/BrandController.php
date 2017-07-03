@@ -12,17 +12,12 @@ use crazyfd\qiniu\Qiniu;
 
 class BrandController extends Controller{
     public  function actionIndex(){
-
-        $query=Brand::find()->where(['status'=>0])->orderBy('sort asc');
+        $query=Brand::find()->where(['status'=>0])->orderBy('sort asc');//排序
         $total=$query->count();
         $page=new Pagination(['totalCount'=>$total,
             'defaultPageSize'=>2,]);
-
         $models=$query->offset($page->offset)->limit($page->limit)->all();//直接通过model的名查找出里面所有的数据
-        /*var_dump($models);
-        exit;*/
         return $this->render('index',['models'=>$models,'page'=>$page]);//注意符号=>
-
     }
     public function actionAdd(){
         $model=new Brand();
@@ -35,7 +30,6 @@ class BrandController extends Controller{
                     $fileName = '/images/brand'.uniqid().'.'.$model->imgFile->extension;//设置$filename是因为它是数据库图片存储目录
                     $model->imgFile->saveAs(\Yii::getAlias('@webroot').$fileName,false);//把图片保存在文件夹里
                     $model->logo=$fileName;
-
                 }*/
                   /*  var_dump($model);*/
                 $model->save();
@@ -53,10 +47,7 @@ class BrandController extends Controller{
         $request=new Request();
         if($request->isPost){
             $model->load($request->post());//load是向$model添加post提交的数据 除了图片文件
-
             if($model->validate()){//后台验证$model里面的字段
-
-
                 $model->save();
                 \Yii::$app->session->setFlash('successs','修改成功');
                 return $this->redirect(['brand/index']);//注意 1要return 2 redirect里面要有中括号
@@ -73,11 +64,8 @@ class BrandController extends Controller{
         $model->save();
         \Yii::$app->session->setFlash('success','删除成功');
         return $this->redirect(['brand/index']);
-
     }
-
-
-    public function actions() {
+    public function actions() {//uploadify 的配置
         return [
             's-upload' => [
                 'class' => UploadAction::className(),
@@ -106,7 +94,7 @@ class BrandController extends Controller{
                 },
                 //END CLOSURE BY TIME
                 'validateOptions' => [
-                    'extensions' => ['jpg', 'png'],
+                    'extensions' => ['jpg', 'png'],//允许上传的格式
                     'maxSize' => 1 * 1024 * 1024, //file size
                 ],
                 'beforeValidate' => function (UploadAction $action) {
@@ -115,37 +103,34 @@ class BrandController extends Controller{
                 'afterValidate' => function (UploadAction $action) {},
                 'beforeSave' => function (UploadAction $action) {},
                 'afterSave' => function (UploadAction $action) {
-                    $imgUrl=$action->getWebUrl();
-
-                    //$action->output['fileUrl'] = $action->getWebUrl();
+                    //原来封装的保存以后执行的是获得各种地址
+                    /* $action->output['fileUrl'] = $action->getWebUrl();
+                    $action->getFilename(); // "image/yyyymmddtimerand.jpg"
+                    $action->getWebUrl(); //  "baseUrl + filename, /upload/image/yyyymmddtimerand.jpg"
+                    $action->getSavePath(); // "/var/www/htdocs/upload/image/yyyymmddtimerand.jpg"*/
+                    //现在和七牛云联合使用，也就是上传到本地服务器成功后，将这个地址给七牛云再上传到七牛云
+                    $imgUrl=$action->getWebUrl();//获取到上传到本地服务器的地址
                     //调用七牛云组件，将图片上传到七牛云
-                    $qiniu=\Yii::$app->qiniu;  //实例化定义的$qiniu方便使用里面的功能
+                    $qiniu=\Yii::$app->qiniu;  //这里将七牛云的功能放到了组件里，实例化定义的$qiniu方便使用里面的功能
                     $qiniu->upLoadFile($action->getSavePath(),$imgUrl);
                     //获取该图片在七牛云的地址
                     $url=$qiniu->getLink($imgUrl);
+                    $action->output['fileUrl']=$url;//将图片的输出路径地址设置为存储到七牛云的地址
 
-                    $action->output['fileUrl']=$url;
-                  /*  $action->getFilename(); // "image/yyyymmddtimerand.jpg"
-                    $action->getWebUrl(); //  "baseUrl + filename, /upload/image/yyyymmddtimerand.jpg"
-                    $action->getSavePath(); // "/var/www/htdocs/upload/image/yyyymmddtimerand.jpg"*/
                 },
             ],
         ];
     }
 
-    public function actionTest(){
+    public function actionTest(){//七牛云的测试
         $ak = 'oYzpv2MsK1xPLJcXQYHSEv_GL8cJ_NEswlr2nMY8';
         $sk = 'XRiBGtYiz6lHnaHXcWxfoKIBxeGZhCWO7540JsyD';
         $domain = 'http://or9o0adkn.bkt.clouddn.com/';
-
-
-        $bucket = '123456';
-
+        $bucket = '123456';//建立的仓库名
         $qiniu = new Qiniu($ak, $sk,$domain, $bucket);
         $fileName= \Yii::getAlias('@webroot').'/upload/1.png';
         $key = '1.png';
         $re=$qiniu->uploadFile($fileName,$key);
-
         $url = $qiniu->getLink($key);
         var_dump($url);
     }

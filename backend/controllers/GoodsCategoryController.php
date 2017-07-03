@@ -12,18 +12,16 @@ class GoodsCategoryController extends Controller{
          $model=new GoodsCategory();
          if($model->load(\Yii::$app->request->post()) && $model->validate()){
            //判断是否是添加一级分类
-             if($model->parent_id){
+             if($model->parent_id){//父id存在表示不是一级分类，就只用找到它的父id，然后prependTo
                  $parent=GoodsCategory::findOne(['id'=>$model->parent_id]);
-
                  $model->prependTo($parent);
-             }else{
-                 //添加一级分类
+             }else{//没有父id表示添加的是一级分类，添加一级分类用makeRoot()
                  $model->makeRoot();
              }
              \Yii::$app->session->setFlash('success',['设置成功']);
              return $this->redirect(['goods-category/index']);
          }
-         $categories=GoodsCategory::find()->asArray()->all();
+         $categories=GoodsCategory::find()->asArray()->all();//这里是为了使用ztree插件
          return $this->render('add',['model'=>$model,'categories'=>$categories]);
      }
     //修改
@@ -68,9 +66,8 @@ class GoodsCategoryController extends Controller{
     }
     //测试
     public function actionTest(){
-      //创建一级菜单
+      //创建一级菜单 测试的时候分类名称这些数据是自己写的 实际添加的时候是表单提交load得到的
       /*  $jydq = new GoodsCategory(['name' => '家用电器','parent_id'=>0]);
-
         $jydq->makeRoot();//将当前分类设置为一级分类*/
        /* var_dump($jydq);
         exit;*/

@@ -6,8 +6,6 @@ echo $form->field($model,'name');
 echo $form->field($model,'intro')->textarea();
 echo $form->field($model,'logo')->hiddenInput(['id'=>'brand-logo']);
 /*echo $form->field($model,'imgFile')->fileInput();*/
-
-
 /*echo \yii\bootstrap\Html::submitButton('提交',['class'=>'btn btn-info']);*/
 echo \yii\bootstrap\Html::fileInput('test',null,['id'=>'test']);
 
@@ -42,14 +40,12 @@ EOF
         ),
     ]
 ]);
-if($model->logo){
+if($model->logo){//如果是修改本来就有图片就显示图片
     echo \yii\helpers\Html::img($model->logo);
-}else{
+}else{//如果本来没有图片刚添加了图片就显示一个img,id为img_logo标签，上面通过jquery写入图片路径
     echo \yii\helpers\Html::img('',['style'=>'display:none','id'=>'img_logo','height'=>'50']);
 }
 
-/*echo $form->field($model,'sort');
-echo $form->field($model,'status')->radioList([1=>'正常',0=>'隐藏']);*/
 echo $form->field($model,'sort');
 echo $form->field($model,'status')->radioList([0=>'正常',1=>'隐藏']);
 echo \yii\bootstrap\Html::submitButton('提交',['class'=>'btn btn-info']);

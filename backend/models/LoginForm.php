@@ -35,13 +35,9 @@ class LoginForm extends Model{
                 }else{//不自动登录
                     \Yii::$app->user->login($user);
                 }
-
                return true;
             }else{
-
                 $this->addError('password_hash','密码不正确');
-
-              /*  var_dump($user);exit;*/
             }
         }else{
             //账号不存在  添加错误

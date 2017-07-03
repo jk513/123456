@@ -3,7 +3,7 @@ namespace backend\models;
 use yii\db\ActiveRecord;
 
 class Brand extends ActiveRecord{
-    public $imgFile;//数据表中没有这个属性字段，所以要自己定义一个
+   /* public $imgFile;*///数据表中没有这个属性字段，所以要自己定义一个，使用了插件就不需要这个了
     static public $help_options=[0=>'不是帮助文档',1=>'是帮助文档'];
 
     public function rules(){
